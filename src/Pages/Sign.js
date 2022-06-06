@@ -48,7 +48,6 @@ const Sign = () => {
     }
   };
 
-  const test = () => {};
   return (
     <div>
       <Link to="/">
@@ -102,6 +101,11 @@ const Sign = () => {
             Go to Login
           </Button>
         </Form>
+        <div>
+          <button name="google" onClick={onSocialClick}>
+            Continue with Google
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -37,7 +37,7 @@ const Login = (props) => {
 
   return (
     <div>
-      <Link to="/main">
+      <Link to="/">
         <FontAwesomeIcon
           style={{
             position: "fixed",
