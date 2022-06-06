@@ -28,14 +28,19 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route
-          path="/main"
-          exact
-          element={<Main is_login={is_login} />}
-        ></Route>
-        <Route path="/" exact element={<Login />}></Route>
-        <Route path="/sign" exact element={<Sign />}></Route>
-        <Route path="/add" exact element={<Add />}></Route>
+        {is_login ? (
+          <>
+            {" "}
+            <Route path="/" exact element={<Main />}></Route>
+            <Route path="/add" exact element={<Add />}></Route>
+          </>
+        ) : (
+          <>
+            {" "}
+            <Route path="/" exact element={<Login />}></Route>
+            <Route path="/sign" exact element={<Sign />}></Route>
+          </>
+        )}
       </Routes>
     </div>
   );

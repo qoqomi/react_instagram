@@ -12,21 +12,25 @@ const Login = (props) => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
-
-  const goToHome = (e) => {
-    navigate("/main", { state: e.target.value });
-    console.log(state);
+  const [error, setError] = useState("");
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    if (name === "email") {
+      setUserId(value);
+    } else if (name === "password") {
+      setUserPw(value);
+    }
   };
 
   const loginFB = async () => {
-    if (userId == "" && userPw == "") {
+    if ((userId == "" && userPw == "") || userPw == "" || userId == "") {
       alert("모두 입력해주세요");
     } else {
       try {
         const click_login = await loginEmail(userId, userPw);
-        console.log(click_login);
+        console.log("🎉");
       } catch (error) {
-        console.log(error.message);
+        setError(error.message);
       }
     }
   };
@@ -47,25 +51,24 @@ const Login = (props) => {
         />
       </Link>
 
-      <Form method="get" id="login-form">
+      <Form>
         <LOG
           required
+          name="email"
           type="email"
           placeholder="Email"
           value={userId}
-          onChange={(e) => {
-            setUserId(e.target.value);
-          }}
+          onChange={onChange}
         />
         <LOG
           required
+          name="password"
           type="password"
           placeholder="Password"
           value={userPw}
-          onChange={(e) => {
-            setUserPw(e.target.value);
-          }}
+          onChange={onChange}
         />
+        <p style={{ color: "red" }}>{error}</p>
         <Button color="#288c28" onClick={loginFB}>
           Login
         </Button>
@@ -77,9 +80,6 @@ const Login = (props) => {
           color="#8FBC8F"
         >
           Sign Up
-        </Button>
-        <Button onClick={goToHome} color="#8FBC8F">
-          test
         </Button>
       </Form>
     </div>

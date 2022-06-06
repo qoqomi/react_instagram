@@ -15,7 +15,18 @@ const Sign = () => {
   const [addEmail, setaddEmail] = useState("");
   const [addPw, setAddPw] = useState("");
   const [addNickname, setAddNickname] = useState("");
+  const [error, seterror] = useState("");
+  const onChange = (e) => {
+    const { value, name } = e.target;
 
+    if (name === "email") {
+      setaddEmail(value);
+    } else if (name === "password") {
+      setAddPw(value);
+    } else if (name === "nickname") {
+      setAddNickname(value);
+    }
+  };
   const signup = async () => {
     if (addEmail == "" && addPw == "" && addNickname == "") {
       alert("모두 입력해주세요");
@@ -29,8 +40,10 @@ const Sign = () => {
           id: addEmail,
         });
         console.log(user, data.id);
+        alert("가입을 축하합니다");
+        Navigate("/");
       } catch (error) {
-        console.log(error.message);
+        seterror(error.message);
       }
     }
   };
@@ -52,16 +65,14 @@ const Sign = () => {
         />
       </Link>
       <div>
-        <Form method="get" id="login-form">
+        <Form>
           <LOG
             required
             name="email"
             type="email"
             placeholder="Email"
             value={addEmail}
-            onChange={(e) => {
-              setaddEmail(e.target.value);
-            }}
+            onChange={onChange}
           />
           <LOG
             required
@@ -69,20 +80,17 @@ const Sign = () => {
             type="text"
             placeholder="Nickname"
             value={addNickname}
-            onChange={(e) => {
-              setAddNickname(e.target.value);
-            }}
+            onChange={onChange}
           />
           <LOG
             required
+            name="password"
             type="password"
             placeholder="Password"
             value={addPw}
-            onChange={(e) => {
-              setAddPw(e.target.value);
-            }}
+            onChange={onChange}
           />
-
+          <p style={{ color: "red" }}>{error}</p>
           <Button onClick={signup} color="#288c28">
             Sign Up
           </Button>
