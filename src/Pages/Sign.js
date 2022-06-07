@@ -5,10 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 //fire
-import { signupEmail, auth, db } from "../shared/firebase";
+import { signupEmail, auth, db, storage } from "../shared/firebase";
 import { collection, addDoc } from "firebase/firestore";
 //changePage
 import { Navigate } from "react-router-dom";
+import { async } from "@firebase/util";
+//storage
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 const Sign = () => {
   const navigate = useNavigate();
 
@@ -16,6 +20,8 @@ const Sign = () => {
   const [addPw, setAddPw] = useState("");
   const [addNickname, setAddNickname] = useState("");
   const [error, seterror] = useState("");
+  const [file, setFile] = useState("");
+
   const onChange = (e) => {
     const { value, name } = e.target;
 
@@ -28,6 +34,7 @@ const Sign = () => {
     }
   };
   const signup = async () => {
+    console.log(file);
     if (addEmail == "" && addPw == "" && addNickname == "") {
       alert("모두 입력해주세요");
     } else {
@@ -38,31 +45,30 @@ const Sign = () => {
         const data = await addDoc(collection(db, "users"), {
           name: addNickname,
           id: addEmail,
+          image_url: file,
         });
         console.log(user, data.id);
         alert("가입을 축하합니다");
-        Navigate("/");
+        navigate("/");
       } catch (error) {
         seterror(error.message);
       }
     }
   };
 
+  const onChangeFile = async (e) => {
+    const uploaded_file = await uploadBytes(
+      ref(storage, `images/${e.target.files[0].name}`),
+      e.target.files[0]
+    );
+
+    const file_url = await getDownloadURL(uploaded_file.ref);
+    console.log(file_url);
+    setFile(file_url);
+  };
+
   return (
     <div>
-      <Link to="/">
-        <FontAwesomeIcon
-          style={{
-            position: "fixed",
-            top: "0",
-            right: "0",
-            margin: "10px 10px 0px 0px ",
-            color: "gray",
-          }}
-          icon={faHouse}
-          size="2x"
-        />
-      </Link>
       <div>
         <Form>
           <LOG
@@ -89,23 +95,26 @@ const Sign = () => {
             value={addPw}
             onChange={onChange}
           />
+          <LOG
+            required
+            name="file"
+            type="file"
+            placeholder="Upload file"
+            onChange={onChangeFile}
+          />
           <p style={{ color: "red" }}>{error}</p>
-          <Button onClick={signup} color="#288c28">
+          <Button onClick={signup} color="#fccb4f">
             Sign Up
           </Button>
           <Button
             onClick={() => {
-              navigate("/");
+              navigate("/login");
             }}
+            color="#212529"
           >
             Go to Login
           </Button>
         </Form>
-        <div>
-          <button name="google" onClick={onSocialClick}>
-            Continue with Google
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -123,11 +132,12 @@ const LOG = styled.input`
   margin-bottom: 25px;
   font-size: 18px;
   outline: 0;
+
   :not([type="submit"]) {
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     transition: border-color 0.3s ease-in-out;
     :focus {
-      border-color: #288c28;
+      border-color: #212529;
     }
   }
 `;
@@ -137,6 +147,8 @@ const Button = styled.button`
   margin-bottom: 15px;
   border: none;
   padding: 18px;
+  color: white;
+  letter-spacing: 2px;
   background-color: ${(props) => props.color};
   :hover {
     box-shadow: 6px 6px 6px 0 rgba(0, 0, 0, 0.19);

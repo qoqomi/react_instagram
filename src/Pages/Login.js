@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 //fire
 import { auth, loginEmail } from "../shared/firebase";
 //Route
 import { Link, useNavigate } from "react-router-dom";
-//FontAwesome
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse } from "@fortawesome/free-solid-svg-icons";
-
+//Styled
+import styled from "styled-components";
 const Login = (props) => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState("");
@@ -29,6 +26,7 @@ const Login = (props) => {
       try {
         const click_login = await loginEmail(userId, userPw);
         console.log("🎉");
+        navigate("/");
       } catch (error) {
         setError(error.message);
       }
@@ -37,20 +35,6 @@ const Login = (props) => {
 
   return (
     <div>
-      <Link to="/">
-        <FontAwesomeIcon
-          style={{
-            position: "fixed",
-            top: "0",
-            right: "0",
-            margin: "10px 10px 0px 0px ",
-            color: "gray",
-          }}
-          icon={faHouse}
-          size="2x"
-        />
-      </Link>
-
       <Form>
         <LOG
           required
@@ -69,7 +53,7 @@ const Login = (props) => {
           onChange={onChange}
         />
         <p style={{ color: "red" }}>{error}</p>
-        <Button color="#288c28" onClick={loginFB}>
+        <Button color="#212529" onClick={loginFB}>
           Login
         </Button>
 
@@ -77,7 +61,7 @@ const Login = (props) => {
           onClick={() => {
             navigate("/sign");
           }}
-          color="#8FBC8F"
+          color="#fccb4f"
         >
           Sign Up
         </Button>
@@ -103,7 +87,7 @@ const LOG = styled.input`
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     transition: border-color 0.3s ease-in-out;
     :focus {
-      border-color: #288c28;
+      border-color: #212529;
     }
   }
 `;
@@ -113,7 +97,10 @@ const Button = styled.button`
   margin-bottom: 15px;
   border: none;
   padding: 18px;
+
+  letter-spacing: 2px;
   background-color: ${(props) => props.color};
+  color: white;
   :hover {
     box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, 0.19);
   }

@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+
+import { getStorage } from "firebase/storage";
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBxfJnMJtO-RsRdAQKFe6mq-nh eOr3GC44",
@@ -31,4 +33,7 @@ export const loginEmail = (email, Password) => {
 
 //firestore
 export const db = getFirestore(app);
+//storage
+export const storage = getStorage(app);
+
 export default app;
