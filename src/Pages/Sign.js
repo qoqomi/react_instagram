@@ -13,7 +13,7 @@ import { async } from "@firebase/util";
 //storage
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const Sign = () => {
+const Sign = ({ Account }) => {
   const navigate = useNavigate();
 
   const [addEmail, setaddEmail] = useState("");
@@ -46,6 +46,7 @@ const Sign = () => {
           name: addNickname,
           id: addEmail,
           image_url: file,
+          uid: Account.uid,
         });
         console.log(user, data.id);
         alert("가입을 축하합니다");
@@ -97,6 +98,7 @@ const Sign = () => {
           />
           <LOG
             required
+            accept="image/*"
             name="file"
             type="file"
             placeholder="Upload file"

@@ -12,10 +12,11 @@ import { onAuthStateChanged } from "firebase/auth";
 
 function App() {
   const [is_login, setIsLogin] = React.useState(false);
-
+  const [Account, setAccount] = React.useState(null);
   const login_true = async (user) => {
     if (user) {
       setIsLogin(true);
+      setAccount(user);
     } else {
       setIsLogin(false);
     }
@@ -32,9 +33,13 @@ function App() {
         <Header is_login={is_login} />
         <Routes>
           <Route path="/" exact element={<Main />}></Route>
-          <Route path="/add" exact element={<Add />}></Route>
+          <Route path="/add" exact element={<Add Account={Account} />}></Route>
           <Route path="/login" exact element={<Login />}></Route>
-          <Route path="/sign" exact element={<Sign />}></Route>
+          <Route
+            path="/sign"
+            exact
+            element={<Sign Account={Account} />}
+          ></Route>
         </Routes>
       </>
     </div>

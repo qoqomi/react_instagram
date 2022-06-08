@@ -1,20 +1,42 @@
 import React, { useState } from "react";
 //Styled
 import styled from "styled-components";
-
-const Add = (props) => {
-  const [nweet, setNweet] = useState("");
+import { getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
+import { async } from "@firebase/util";
+import { storage, db } from "../shared/firebase";
+import { addDoc, collection } from "firebase/firestore";
+const Add = ({ Account }) => {
+  console.log(Account);
+  const [text, setText] = useState("");
+  const [file, setFile] = useState("");
+  const [file_link, setFile_link] = useState(null);
 
   const onChange = (e) => {
     const { value } = e.target;
 
-    setNweet(value);
-    console.log(nweet);
+    setText(value);
+    console.log(text);
   };
-  const onSubmit = (e) => {
-    e.preventDefault();
-  };
+  const onFileChange = async (e) => {
+    //files.name=>이름을 정할 수 있음 ,무슨파일 올릴거니(현재 올린 파일 올릴거야)
+    const upload_file = await uploadBytes(
+      ref(storage, `images/${e.target.files[0].name}`),
+      e.target.files[0]
+    );
+    console.log(upload_file);
 
+    const file_url = await getDownloadURL(upload_file.ref);
+    setFile_link(file_url);
+  };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const data = await addDoc(collection(db, "add"), {
+      discription: text,
+      file: file_link,
+      uid: Account.uid,
+    });
+  };
   return (
     <Container onSubmit={onSubmit}>
       <Input
@@ -22,12 +44,20 @@ const Add = (props) => {
         name="nweet"
         type="text"
         onChange={onChange}
-        value={nweet}
+        value={text}
         placeholder="Today your mind..."
         cols="50"
         rows="10"
       />
-      <LOG required name="file" type="file" placeholder="Upload file" />
+      <LOG
+        required
+        accept="image/*"
+        name="file"
+        type="file"
+        placeholder="Upload file"
+        onChange={onFileChange}
+      />
+
       <Button type="submit" color="#212529">
         등록하기
       </Button>

@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 //fire
-import { auth, loginEmail } from "../shared/firebase";
+import { auth, loginEmail, db } from "../shared/firebase";
 //Route
 import { Link, useNavigate } from "react-router-dom";
 //Styled
 import styled from "styled-components";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
 const Login = (props) => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
   const [error, setError] = useState("");
+
   const onChange = (e) => {
     const { value, name } = e.target;
     if (name === "email") {
@@ -27,6 +30,16 @@ const Login = (props) => {
         const click_login = await loginEmail(userId, userPw);
         console.log("🎉");
         navigate("/");
+
+        const q = query(
+          collection(db, "users"),
+          where("id", "==", click_login.user.email)
+        );
+
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
       } catch (error) {
         setError(error.message);
       }

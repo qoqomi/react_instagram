@@ -48,10 +48,8 @@ const Container = styled.div`
   top: 0;
   left: 0;
   right: 0;
-
   height: 20px;
   padding: 1rem;
-
   background: white;
   font-weight: bold;
   display: flex;
@@ -68,6 +66,10 @@ const Button = styled.button`
   text-transform: uppercase;
   transition: all 0.25s ease-in 0s;
   font-weight: bold;
+  position: "fixed";
+  top: 0;
+  right: 10;
+  margin: 20px 5px 0px 0px;
 
   &:hover {
     background-color: white;
