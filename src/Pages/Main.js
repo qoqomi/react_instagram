@@ -1,33 +1,53 @@
-import React from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../shared/firebase";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-
 //fontAwesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-const Main = (props) => {
+
+import { useSelector } from "react-redux";
+
+const Main = (Account) => {
+  const data = useSelector((state) => state.wish.list);
+
   return (
     <>
-      <Container>
-        <img
-          style={{
-            width: "30px",
-            height: "30px",
-            borderRadius: "50%",
-          }}
-          src="https://blog.kakaocdn.net/dn/bftRiB/btqAjaghSBk/5CcN9W5qyCU8HLylVYcXb1/img.png"
-        />
-        <span>nickname</span>
-      </Container>
-      <img
-        style={{ width: "100%", height: "100%" }}
-        src="data:image/jpeg;base64,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"
-      />
-      <P>
-        어쩌고저쩌고 솰라솰라솰ㄹddddfadfaldskjfaldksjfalkdsfjaldfjal;jdalsdjf
-      </P>
+      {data.map((el, i) => {
+        return (
+          <div key={i}>
+            <Container>
+              <div>
+                <img
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                  }}
+                  src="https://blog.kakaocdn.net/dn/bftRiB/btqAjaghSBk/5CcN9W5qyCU8HLylVYcXb1/img.png"
+                />
+                <span>User</span>
+              </div>
+              <Big>
+                <div>수정</div>
+                <div>삭제</div>
+              </Big>
+            </Container>
+            <Div>
+              <img
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                src={
+                  el.img_url
+                    ? el.img_url
+                    : "https://photo.jtbc.joins.com/news/2021/03/26/202103261532034842.jpg"
+                }
+              />
+            </Div>
+
+            <P>{el.text}</P>
+          </div>
+        );
+      })}
+
       <AddBtn>
         <Link to="/add">
           <FontAwesomeIcon icon={faPlus} size="2x" style={{ color: "white" }} />
@@ -39,9 +59,9 @@ const Main = (props) => {
 
 const Container = styled.div`
   display: flex;
-  flex-direction: row;
   padding: 1em 1em 0.5em 1em;
   padding-top: 75px;
+  justify-content: space-between;
 
   div {
     margin: 0;
@@ -58,7 +78,6 @@ const Container = styled.div`
 `;
 
 const P = styled.p`
-  background-color: green;
   display: flex;
   padding: 0.5em 0.5em 0.5em 1em;
   font-size: 13px;
@@ -81,4 +100,12 @@ const AddBtn = styled.div`
   right: 10px;
 `;
 
+const Div = styled.div`
+  height: 300px;
+`;
+
+const Big = styled.div`
+  display: flex;
+  &: first-child;
+`;
 export default Main;

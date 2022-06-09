@@ -48,7 +48,7 @@ const Container = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  height: 20px;
+  height: 50px;
   padding: 1rem;
   background: white;
   font-weight: bold;
@@ -69,7 +69,7 @@ const Button = styled.button`
   position: "fixed";
   top: 0;
   right: 10;
-  margin: 20px 5px 0px 0px;
+  margin: 2px 5px 0px 0px;
 
   &:hover {
     background-color: white;

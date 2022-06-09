@@ -3,48 +3,59 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { getDownloadURL } from "firebase/storage";
 import { ref, uploadBytes } from "firebase/storage";
-import { async } from "@firebase/util";
+
 import { storage, db } from "../shared/firebase";
 import { addDoc, collection } from "firebase/firestore";
+
+import { useSelector, useDispatch } from "react-redux";
+import { createWish } from "../redux/modules/wish";
+
+import { useNavigate, Link } from "react-router-dom";
+import { auth } from "../shared/firebase";
+import { addWishFB } from "../redux/modules/wish";
+import { query, where, getDocs } from "firebase/firestore";
 const Add = ({ Account }) => {
-  console.log(Account);
-  const [text, setText] = useState("");
-  const [file, setFile] = useState("");
-  const [file_link, setFile_link] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const onChange = (e) => {
-    const { value } = e.target;
+  const file_link_ref = React.useRef({ url: "" });
+  const text_ref = React.useRef(null);
 
-    setText(value);
-    console.log(text);
-  };
+  const data = useSelector((state) => state.wish.list);
+
+  // fileChage -> file 저장
   const onFileChange = async (e) => {
     //files.name=>이름을 정할 수 있음 ,무슨파일 올릴거니(현재 올린 파일 올릴거야)
     const upload_file = await uploadBytes(
       ref(storage, `images/${e.target.files[0].name}`),
       e.target.files[0]
     );
-    console.log(upload_file);
 
+    // const file_url = await getDownloadURL(upload_file.ref);
+    // file_link_ref.current = { url: file_url };
     const file_url = await getDownloadURL(upload_file.ref);
-    setFile_link(file_url);
+
+    file_link_ref.current = { url: file_url };
+    console.log(file_link_ref.current);
   };
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const data = await addDoc(collection(db, "add"), {
-      discription: text,
-      file: file_link,
-      uid: Account.uid,
-    });
+
+  const onClick = async () => {
+    dispatch(
+      addWishFB({
+        text: text_ref.current.value,
+        img_url: file_link_ref.current?.url,
+      })
+    );
+    navigate("/");
   };
+
   return (
-    <Container onSubmit={onSubmit}>
+    <Container>
       <Input
         required
         name="nweet"
         type="text"
-        onChange={onChange}
-        value={text}
+        ref={text_ref}
         placeholder="Today your mind..."
         cols="50"
         rows="10"
@@ -58,7 +69,7 @@ const Add = ({ Account }) => {
         onChange={onFileChange}
       />
 
-      <Button type="submit" color="#212529">
+      <Button onClick={onClick} color="#212529">
         등록하기
       </Button>
     </Container>

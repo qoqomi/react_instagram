@@ -48,6 +48,12 @@ const Sign = ({ Account }) => {
           image_url: file,
           uid: Account.uid,
         });
+        const add = await addDoc(collection(db, "add"), {
+          name: addNickname,
+          id: addEmail,
+          image_url: file,
+        });
+
         console.log(user, data.id);
         alert("가입을 축하합니다");
         navigate("/");
